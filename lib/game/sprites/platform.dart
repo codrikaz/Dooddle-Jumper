@@ -19,7 +19,7 @@ import '../doodle_dash.dart';
 /// something like: `enum { only }`
 
 abstract class Platform<T> extends SpriteGroupComponent<T>
-    with HasGameRef<DoodleDash>, CollisionCallbacks {
+    with HasGameReference<DoodleDash>, CollisionCallbacks {
   final hitbox = RectangleHitbox();
   bool isMoving = false;
 
@@ -47,7 +47,7 @@ abstract class Platform<T> extends SpriteGroupComponent<T>
   void _move(double dt) {
     if (!isMoving) return;
 
-    final double gameWidth = gameRef.size.x;
+    final double gameWidth = game.size.x;
 
     if (position.x <= 0) {
       direction = 1;
@@ -86,7 +86,7 @@ class NormalPlatform extends Platform<NormalPlatformState> {
     String randSprite = spriteOptions.keys.elementAt(randSpriteIndex);
 
     sprites = {
-      NormalPlatformState.only: await gameRef.loadSprite('game/$randSprite.png')
+      NormalPlatformState.only: await game.loadSprite('game/$randSprite.png')
     };
 
     current = NormalPlatformState.only;
@@ -107,9 +107,9 @@ class BrokenPlatform extends Platform<BrokenPlatformState> {
 
     sprites = <BrokenPlatformState, Sprite>{
       BrokenPlatformState.cracked:
-          await gameRef.loadSprite('game/platform_cracked_monitor.png'),
+          await game.loadSprite('game/platform_cracked_monitor.png'),
       BrokenPlatformState.broken:
-          await gameRef.loadSprite('game/platform_monitor_broken.png'),
+          await game.loadSprite('game/platform_monitor_broken.png'),
     };
 
     current = BrokenPlatformState.cracked;
@@ -134,9 +134,9 @@ class SpringBoard extends Platform<SpringState> {
 
     sprites = <SpringState, Sprite>{
       SpringState.down:
-          await gameRef.loadSprite('game/platform_trampoline_down.png'),
+          await game.loadSprite('game/platform_trampoline_down.png'),
       SpringState.up:
-          await gameRef.loadSprite('game/platform_trampoline_up.png'),
+          await game.loadSprite('game/platform_trampoline_up.png'),
     };
 
     current = SpringState.up;
@@ -177,7 +177,7 @@ class EnemyPlatform extends Platform<EnemyPlatformState> {
 
     sprites = <EnemyPlatformState, Sprite>{
       EnemyPlatformState.only:
-          await gameRef.loadSprite('game/$enemySprite.png'),
+          await game.loadSprite('game/$enemySprite.png'),
     };
 
     current = EnemyPlatformState.only;

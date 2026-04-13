@@ -22,7 +22,7 @@ enum PlayerState {
 }
 
 class Player extends SpriteGroupComponent<PlayerState>
-    with HasGameRef<DoodleDash>, KeyboardHandler, CollisionCallbacks {
+    with HasGameReference<DoodleDash>, KeyboardHandler, CollisionCallbacks {
   Player({
     super.position,
     required this.character,
@@ -37,6 +37,7 @@ class Player extends SpriteGroupComponent<PlayerState>
   final int movingLeftInput = -1;
   final int movingRightInput = 1;
   Vector2 _velocity = Vector2.zero();
+  int _powerUpToken = 0;
   bool get isMovingDown => _velocity.y > 0;
   Character character;
   double jumpSpeed;
@@ -54,18 +55,14 @@ class Player extends SpriteGroupComponent<PlayerState>
 
   @override
   void update(double dt) {
-    if (gameRef.gameManager.isIntro || gameRef.gameManager.isGameOver) return;
+    if (game.gameManager.isIntro || game.gameManager.isGameOver) return;
 
     _velocity.x = _hAxisInput * jumpSpeed;
 
     final double dashHorizontalCenter = size.x / 2;
 
-    if (position.x < dashHorizontalCenter) {
-      position.x = gameRef.size.x - (dashHorizontalCenter);
-    }
-    if (position.x > gameRef.size.x - (dashHorizontalCenter)) {
-      position.x = dashHorizontalCenter;
-    }
+    // Removed wrap-around logic to prevent infinite game. 
+    // Character will now fall if moving off-screen horizontally.
 
     _velocity.y += _gravity;
 
@@ -75,7 +72,7 @@ class Player extends SpriteGroupComponent<PlayerState>
   }
 
   @override
-  bool onKeyEvent(RawKeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
+  bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
     _hAxisInput = 0;
 
     if (keysPressed.contains(LogicalKeyboardKey.arrowLeft)) {
@@ -138,7 +135,7 @@ class Player extends SpriteGroupComponent<PlayerState>
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
     super.onCollision(intersectionPoints, other);
     if (other is EnemyPlatform && !isInvincible) {
-      gameRef.onLose();
+      game.onLose();
       return;
     }
 
@@ -146,7 +143,7 @@ class Player extends SpriteGroupComponent<PlayerState>
         (intersectionPoints.first.y - intersectionPoints.last.y).abs() < 5;
 
     if (isMovingDown && isCollidingVertically) {
-      current = PlayerState.center;
+      current = isWearingHat ? PlayerState.nooglerCenter : PlayerState.center;
       if (other is NormalPlatform) {
         jump();
         return;
@@ -155,7 +152,6 @@ class Player extends SpriteGroupComponent<PlayerState>
         return;
       } else if (other is BrokenPlatform &&
           other.current == BrokenPlatformState.cracked) {
-        jump();
         other.breakPlatform();
         return;
       }
@@ -182,7 +178,11 @@ class Player extends SpriteGroupComponent<PlayerState>
   }
 
   void _removePowerupAfterTime(int ms) {
+    final token = ++_powerUpToken;
     Future.delayed(Duration(milliseconds: ms), () {
+      if (!isMounted || token != _powerUpToken) {
+        return;
+      }
       current = PlayerState.center;
     });
   }
@@ -192,30 +192,34 @@ class Player extends SpriteGroupComponent<PlayerState>
   }
 
   void reset() {
+    _powerUpToken++;
+    resetDirection();
     _velocity = Vector2.zero();
-    current = PlayerState.center;
+    if (sprites != null) {
+      current = PlayerState.center;
+    }
   }
 
   void resetPosition() {
     position = Vector2(
-      (gameRef.size.x - size.x) / 2,
-      (gameRef.size.y - size.y) / 2,
+      game.size.x / 2,
+      game.size.y * 0.75,
     );
   }
 
   Future<void> _loadCharacterSprites() async {
     // Load & configure sprite assets
-    final left = await gameRef.loadSprite('game/${character.name}_left.png');
-    final right = await gameRef.loadSprite('game/${character.name}_right.png');
+    final left = await game.loadSprite('game/${character.name}_left.png');
+    final right = await game.loadSprite('game/${character.name}_right.png');
     final center =
-        await gameRef.loadSprite('game/${character.name}_center.png');
-    final rocket = await gameRef.loadSprite('game/rocket_4.png');
+        await game.loadSprite('game/${character.name}_center.png');
+    final rocket = await game.loadSprite('game/rocket_4.png');
     final nooglerCenter =
-        await gameRef.loadSprite('game/${character.name}_hat_center.png');
+        await game.loadSprite('game/${character.name}_hat_center.png');
     final nooglerLeft =
-        await gameRef.loadSprite('game/${character.name}_hat_left.png');
+        await game.loadSprite('game/${character.name}_hat_left.png');
     final nooglerRight =
-        await gameRef.loadSprite('game/${character.name}_hat_right.png');
+        await game.loadSprite('game/${character.name}_hat_right.png');
 
     sprites = <PlayerState, Sprite>{
       PlayerState.left: left,

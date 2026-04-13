@@ -4,13 +4,17 @@
 
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'ads/ad_service.dart';
 import 'game/doodle_dash.dart';
 import 'game/util/util.dart';
 import 'game/widgets/widgets.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await AdService.initialize();
   runApp(const MyApp());
 }
 
@@ -37,7 +41,7 @@ class MyApp extends StatelessWidget {
   }
 }
 
-final Game game = DoodleDash();
+final DoodleDash game = DoodleDash();
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
@@ -49,25 +53,47 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
-      body: Center(
-        child: LayoutBuilder(builder: (context, constraints) {
-          return Container(
-            constraints: const BoxConstraints(
-              maxWidth: 800,
-              minWidth: 550,
-            ),
-            child: GameWidget(
-              game: game,
-              overlayBuilderMap: <String, Widget Function(BuildContext, Game)>{
-                'gameOverlay': (context, game) => GameOverlay(game),
-                'mainMenuOverlay': (context, game) => MainMenuOverlay(game),
-                'gameOverOverlay': (context, game) => GameOverOverlay(game),
-              },
-            ),
-          );
-        }),
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) {
+          return;
+        }
+
+        if (game.gameManager.isPlaying && !game.overlays.isActive('backMenuOverlay')) {
+          game.pauseGame();
+          return;
+        }
+
+        if (game.overlays.isActive('backMenuOverlay')) {
+          game.overlays.remove('backMenuOverlay');
+          game.togglePauseState();
+          return;
+        }
+
+        SystemNavigator.pop();
+      },
+      child: Scaffold(
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        body: Center(
+          child: LayoutBuilder(builder: (context, constraints) {
+            return Container(
+              constraints: const BoxConstraints(
+                maxWidth: 800,
+                minWidth: 550,
+              ),
+              child: GameWidget(
+                game: game,
+                overlayBuilderMap: <String, Widget Function(BuildContext, Game)>{
+                  'gameOverlay': (context, game) => GameOverlay(game),
+                  'mainMenuOverlay': (context, game) => MainMenuOverlay(game),
+                  'gameOverOverlay': (context, game) => GameOverOverlay(game),
+                  'backMenuOverlay': (context, game) => BackMenuOverlay(game),
+                },
+              ),
+            );
+          }),
+        ),
       ),
     );
   }

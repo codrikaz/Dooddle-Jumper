@@ -77,7 +77,7 @@ class GameOverlayState extends State<GameOverlay> {
                         child: Material(
                           color: Colors.transparent,
                           elevation: 3.0,
-                          shadowColor: Theme.of(context).colorScheme.background,
+                          shadowColor: Theme.of(context).colorScheme.surface,
                           child: const Icon(Icons.arrow_left, size: 64),
                         ),
                       ),
@@ -94,7 +94,7 @@ class GameOverlayState extends State<GameOverlay> {
                         child: Material(
                           color: Colors.transparent,
                           elevation: 3.0,
-                          shadowColor: Theme.of(context).colorScheme.background,
+                          shadowColor: Theme.of(context).colorScheme.surface,
                           child: const Icon(Icons.arrow_right, size: 64),
                         ),
                       ),

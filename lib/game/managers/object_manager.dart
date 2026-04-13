@@ -13,7 +13,7 @@ import '../util/util.dart';
 
 final Random _rand = Random();
 
-class ObjectManager extends Component with HasGameRef<DoodleDash> {
+class ObjectManager extends Component with HasGameReference<DoodleDash> {
   ObjectManager({
     this.minVerticalDistanceToNextPlatform = 200,
     this.maxVerticalDistanceToNextPlatform = 300,
@@ -24,15 +24,21 @@ class ObjectManager extends Component with HasGameRef<DoodleDash> {
   final probGen = ProbabilityGenerator();
   final double _tallestPlatformHeight = 50;
   final List<Platform> _platforms = [];
+  Platform? get startingPlatform =>
+      _platforms.isEmpty ? null : _platforms.first;
 
   @override
   void onMount() {
     super.onMount();
 
-    var currentX = (gameRef.size.x.floor() / 2).toDouble() - 50;
+    _platforms.clear();
+    _enemies.clear();
+    _powerups.clear();
+
+    var currentX = (game.size.x.floor() / 2).toDouble() - 50;
 
     var currentY =
-        gameRef.size.y - (_rand.nextInt(gameRef.size.y.floor()) / 3) - 50;
+        game.size.y - (_rand.nextInt(game.size.y.floor()) / 3) - 50;
 
     for (var i = 0; i < 9; i++) {
       if (i != 0) {
@@ -54,12 +60,16 @@ class ObjectManager extends Component with HasGameRef<DoodleDash> {
 
   @override
   void update(double dt) {
+    if (_platforms.isEmpty) {
+      super.update(dt);
+      return;
+    }
+
     final topOfLowestPlatform =
         _platforms.first.position.y + _tallestPlatformHeight;
 
-    final screenBottom = gameRef.player.position.y +
-        (gameRef.size.x / 2) +
-        gameRef.screenBufferSpace;
+    final screenBottom = game.camera.visibleWorldRect.bottom +
+        game.screenBufferSpace;
 
     if (topOfLowestPlatform > screenBottom) {
       var newPlatY = _generateNextY();
@@ -69,7 +79,7 @@ class ObjectManager extends Component with HasGameRef<DoodleDash> {
 
       _platforms.add(nextPlat);
 
-      gameRef.gameManager.increaseScore();
+      game.gameManager.increaseScore();
 
       _cleanupPlatforms();
       _maybeAddEnemy();
@@ -124,8 +134,9 @@ class ObjectManager extends Component with HasGameRef<DoodleDash> {
   }
 
   void configure(int nextLevel, Difficulty config) {
-    minVerticalDistanceToNextPlatform = gameRef.levelManager.minDistance;
-    maxVerticalDistanceToNextPlatform = gameRef.levelManager.maxDistance;
+    resetSpecialties();
+    minVerticalDistanceToNextPlatform = game.levelManager.minDistance;
+    maxVerticalDistanceToNextPlatform = game.levelManager.maxDistance;
 
     for (int i = 1; i <= nextLevel; i++) {
       enableLevelSpecialty(i);
@@ -142,7 +153,7 @@ class ObjectManager extends Component with HasGameRef<DoodleDash> {
 
     do {
       nextPlatformAnchorX =
-          _rand.nextInt(gameRef.size.x.floor() - platformWidth).toDouble();
+          _rand.nextInt(game.size.x.floor() - platformWidth).toDouble();
     } while (previousPlatformXRange.overlaps(
         Range(nextPlatformAnchorX, nextPlatformAnchorX + platformWidth)));
 
@@ -193,9 +204,8 @@ class ObjectManager extends Component with HasGameRef<DoodleDash> {
   }
 
   void _cleanupEnemies() {
-    final screenBottom = gameRef.player.position.y +
-        (gameRef.size.x / 2) +
-        gameRef.screenBufferSpace;
+    final screenBottom = game.camera.visibleWorldRect.bottom +
+        game.screenBufferSpace;
 
     while (_enemies.isNotEmpty && _enemies.first.position.y > screenBottom) {
       remove(_enemies.first);
@@ -226,9 +236,8 @@ class ObjectManager extends Component with HasGameRef<DoodleDash> {
   }
 
   void _cleanupPowerups() {
-    final screenBottom = gameRef.player.position.y +
-        (gameRef.size.x / 2) +
-        gameRef.screenBufferSpace;
+    final screenBottom = game.camera.visibleWorldRect.bottom +
+        game.screenBufferSpace;
     while (_powerups.isNotEmpty && _powerups.first.position.y > screenBottom) {
       if (_powerups.first.parent != null) {
         remove(_powerups.first);

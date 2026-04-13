@@ -36,7 +36,7 @@ class _MainMenuOverlayState extends State<MainMenuOverlay> {
       final bool screenHeightIsSmall = constraints.maxHeight < 760;
 
       return Material(
-        color: Theme.of(context).colorScheme.background,
+        color: Theme.of(context).colorScheme.surface,
         child: Padding(
           padding: const EdgeInsets.all(24.0),
           child: Center(
@@ -110,10 +110,10 @@ class _MainMenuOverlayState extends State<MainMenuOverlay> {
                         game.startGame();
                       },
                       style: ButtonStyle(
-                        minimumSize: MaterialStateProperty.all(
+                        minimumSize: WidgetStateProperty.all(
                           const Size(100, 50),
                         ),
-                        textStyle: MaterialStateProperty.all(
+                        textStyle: WidgetStateProperty.all(
                             Theme.of(context).textTheme.titleLarge),
                       ),
                       child: const Text('Start'),
@@ -173,7 +173,7 @@ class CharacterButton extends StatelessWidget {
     return OutlinedButton(
       style: (selected)
           ? ButtonStyle(
-              backgroundColor: MaterialStateProperty.all<Color>(
+              backgroundColor: WidgetStateProperty.all<Color>(
                   const Color.fromARGB(31, 64, 195, 255)))
           : null,
       onPressed: onSelectChar,

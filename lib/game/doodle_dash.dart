@@ -5,6 +5,7 @@
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import './world.dart';
 import 'managers/managers.dart';
@@ -25,8 +26,31 @@ class DoodleDash extends FlameGame
   late Player player;
 
   @override
+  KeyEventResult onKeyEvent(
+      KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
+    final isKeyDown = event is KeyDownEvent;
+
+    if (isKeyDown &&
+        (keysPressed.contains(LogicalKeyboardKey.escape) ||
+            keysPressed.contains(LogicalKeyboardKey.goBack))) {
+      if (gameManager.isPlaying) {
+        pauseGame();
+        return KeyEventResult.handled;
+      }
+    }
+    return super.onKeyEvent(event, keysPressed);
+  }
+
+  void pauseGame() {
+    if (!overlays.isActive('backMenuOverlay')) {
+      togglePauseState();
+      overlays.add('backMenuOverlay');
+    }
+  }
+
+  @override
   Future<void> onLoad() async {
-    await add(_world);
+    await camera.backdrop.add(_world);
 
     await add(gameManager);
 
@@ -51,27 +75,17 @@ class DoodleDash extends FlameGame
     if (gameManager.isPlaying) {
       checkLevelUp();
 
-      final Rect worldBounds = Rect.fromLTRB(
-        0,
-        camera.position.y - screenBufferSpace,
-        camera.gameSize.x,
-        camera.position.y + _world.size.y,
-      );
-      camera.worldBounds = worldBounds;
-      if (player.isMovingDown) {
-        camera.worldBounds = worldBounds;
+      final visibleWorldRect = camera.visibleWorldRect;
+      final halfwayPoint = visibleWorldRect.top + (visibleWorldRect.height * 0.4);
+      final loseThreshold = visibleWorldRect.bottom + (player.size.y / 2);
+
+      if (!player.isMovingDown && player.position.y <= halfwayPoint) {
+        camera.follow(player);
+      } else if (player.isMovingDown) {
+        camera.stop();
       }
 
-      var isInTopHalfOfScreen = player.position.y <= (_world.size.y / 2);
-      if (!player.isMovingDown && isInTopHalfOfScreen) {
-        camera.followComponent(player);
-      }
-
-      if (player.position.y >
-          camera.position.y +
-              _world.size.y +
-              player.size.y +
-              screenBufferSpace) {
+      if (player.position.y > loseThreshold) {
         onLose();
       }
     }
@@ -82,57 +96,67 @@ class DoodleDash extends FlameGame
     return const Color.fromARGB(255, 241, 247, 249);
   }
 
-  void initializeGameStart() {
-    setCharacter();
-
+  Future<void> initializeGameStart() async {
     gameManager.reset();
 
-    if (children.contains(objectManager)) objectManager.removeFromParent();
+    for (final existingPlayer in world.children.whereType<Player>().toList()) {
+      existingPlayer.removeFromParent();
+    }
+
+    if (objectManager.parent != null) {
+      objectManager.removeFromParent();
+    }
 
     levelManager.reset();
 
+    await setCharacter();
     player.reset();
-    camera.worldBounds = Rect.fromLTRB(
-      0,
-      -_world.size.y, // top of screen is 0, so negative is already off screen
-      camera.gameSize.x,
-      _world.size.y +
-          screenBufferSpace, // makes sure bottom bound of game is below bottom of screen
-    );
-    camera.followComponent(player);
-
-    player.resetPosition();
 
     objectManager = ObjectManager(
         minVerticalDistanceToNextPlatform: levelManager.minDistance,
         maxVerticalDistanceToNextPlatform: levelManager.maxDistance);
 
-    add(objectManager);
+    await world.add(objectManager);
 
     objectManager.configure(levelManager.level, levelManager.difficulty);
+
+    player.resetPosition();
+
+    final startingPlatform = objectManager.startingPlatform;
+    if (startingPlatform != null) {
+      player.position = Vector2(
+        startingPlatform.center.x,
+        startingPlatform.position.y - (player.size.y / 2),
+      );
+    }
+
+    camera.viewfinder.position = player.position.clone();
+    camera.stop();
+    player.jump();
   }
 
-  void setCharacter() {
+  Future<void> setCharacter() async {
     player = Player(
       character: gameManager.character,
       jumpSpeed: levelManager.startingJumpSpeed,
     );
-    add(player);
+    await world.add(player);
   }
 
-  void startGame() {
-    initializeGameStart();
+  Future<void> startGame() async {
+    await initializeGameStart();
     gameManager.state = GameState.playing;
     overlays.remove('mainMenuOverlay');
   }
 
-  void resetGame() {
-    startGame();
+  Future<void> resetGame() async {
+    await startGame();
     overlays.remove('gameOverOverlay');
   }
 
   void onLose() {
     gameManager.state = GameState.gameOver;
+    camera.stop();
     player.removeFromParent();
     overlays.add('gameOverOverlay');
   }

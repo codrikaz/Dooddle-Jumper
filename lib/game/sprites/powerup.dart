@@ -5,10 +5,10 @@
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 
-import '../doodle_dash.dart';
+import '../hoplet_bird.dart';
 
 abstract class PowerUp extends SpriteComponent
-    with HasGameReference<DoodleDash>, CollisionCallbacks {
+    with HasGameReference<HopletBird>, CollisionCallbacks {
   final hitbox = RectangleHitbox();
   double get jumpSpeedMultiplier;
 

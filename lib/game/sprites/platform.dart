@@ -7,7 +7,7 @@ import 'dart:math';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 
-import '../doodle_dash.dart';
+import '../hoplet_bird.dart';
 
 /// The supertype for all Platforms, including Enemies
 /// This class adds a hitbox and Collision Callbacks to all subtypes,
@@ -19,7 +19,7 @@ import '../doodle_dash.dart';
 /// something like: `enum { only }`
 
 abstract class Platform<T> extends SpriteGroupComponent<T>
-    with HasGameReference<DoodleDash>, CollisionCallbacks {
+    with HasGameReference<HopletBird>, CollisionCallbacks {
   final hitbox = RectangleHitbox();
   bool isMoving = false;
 

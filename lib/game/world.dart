@@ -6,9 +6,9 @@ import 'package:flame/components.dart';
 import 'package:flame/parallax.dart';
 import 'package:flutter/material.dart';
 
-import './doodle_dash.dart';
+import './hoplet_bird.dart';
 
-class World extends ParallaxComponent<DoodleDash> {
+class World extends ParallaxComponent<HopletBird> {
   @override
   Future<void> onLoad() async {
     parallax = await game.loadParallax(

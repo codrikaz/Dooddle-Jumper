@@ -28,11 +28,16 @@ if (keystorePropertiesFile.exists()) {
     keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 }
 
+def signingValue = { envName, propertyName ->
+    def envValue = System.getenv(envName)
+    return envValue != null && !envValue.trim().isEmpty() ? envValue : keystoreProperties[propertyName]
+}
+
 
 android {
-    namespace "com.coddrikaz.dash"
-    compileSdkVersion 35
-    ndkVersion "27.0.12077973" // Updated NDK for 16 KB page support
+    namespace "com.codrikaz.hoplet"
+    compileSdkVersion 36
+    ndkVersion "28.2.13676358"
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -48,8 +53,8 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.coddrikaz.dash"
-        minSdkVersion 21
+        applicationId "com.codrikaz.hoplet"
+        minSdkVersion flutter.minSdkVersion
         targetSdkVersion 35
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
@@ -64,10 +69,11 @@ android {
 
     signingConfigs {
         release {
-            keyAlias keystoreProperties['keyAlias']
-            keyPassword keystoreProperties['keyPassword']
-            storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
-            storePassword keystoreProperties['storePassword']
+            keyAlias signingValue('ANDROID_KEY_ALIAS', 'keyAlias')
+            keyPassword signingValue('ANDROID_KEY_PASSWORD', 'keyPassword')
+            def storeFilePath = signingValue('ANDROID_STORE_FILE', 'storeFile')
+            storeFile storeFilePath ? file(storeFilePath) : null
+            storePassword signingValue('ANDROID_STORE_PASSWORD', 'storePassword')
         }
     }
     buildTypes {

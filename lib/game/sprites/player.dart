@@ -8,7 +8,7 @@ import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/services.dart';
 
-import '../doodle_dash.dart';
+import '../hoplet_bird.dart';
 import 'sprites.dart';
 
 enum PlayerState {
@@ -22,7 +22,7 @@ enum PlayerState {
 }
 
 class Player extends SpriteGroupComponent<PlayerState>
-    with HasGameReference<DoodleDash>, KeyboardHandler, CollisionCallbacks {
+    with HasGameReference<HopletBird>, KeyboardHandler, CollisionCallbacks {
   Player({
     super.position,
     required this.character,
@@ -58,8 +58,6 @@ class Player extends SpriteGroupComponent<PlayerState>
     if (game.gameManager.isIntro || game.gameManager.isGameOver) return;
 
     _velocity.x = _hAxisInput * jumpSpeed;
-
-    final double dashHorizontalCenter = size.x / 2;
 
     // Removed wrap-around logic to prevent infinite game. 
     // Character will now fall if moving off-screen horizontally.

@@ -5,7 +5,8 @@
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 
-import '../doodle_dash.dart';
+import '../../ads/banner_ad_panel.dart';
+import '../hoplet_bird.dart';
 
 // Overlay that appears for the main menu
 class MainMenuOverlay extends StatefulWidget {
@@ -18,11 +19,11 @@ class MainMenuOverlay extends StatefulWidget {
 }
 
 class _MainMenuOverlayState extends State<MainMenuOverlay> {
-  Character character = Character.dash;
+  Character character = Character.hoppy;
 
   @override
   Widget build(BuildContext context) {
-    DoodleDash game = widget.game as DoodleDash;
+    HopletBird game = widget.game as HopletBird;
 
     return LayoutBuilder(builder: (context, constraints) {
       final characterWidth = constraints.maxWidth / 5;
@@ -37,92 +38,107 @@ class _MainMenuOverlayState extends State<MainMenuOverlay> {
 
       return Material(
         color: Theme.of(context).colorScheme.surface,
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Center(
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(
-                    'Doodle Jumper',
-                    style: titleStyle.copyWith(
-                      height: .8,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const WhiteSpace(),
-                  Align(
-                    alignment: Alignment.center,
-                    child: Text('Select your character:',
-                        style: Theme.of(context).textTheme.headlineSmall!
-                    ),
-                  ),
-                  if (!screenHeightIsSmall) const WhiteSpace(height: 30),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      CharacterButton(
-                        character: Character.dash,
-                        selected: character == Character.dash,
-                        onSelectChar: () {
-                          setState(() {
-                            character = Character.dash;
-                          });
-                        },
-                        characterWidth: characterWidth,
-                      ),
-                      CharacterButton(
-                        character: Character.sparky,
-                        selected: character == Character.sparky,
-                        onSelectChar: () {
-                          setState(() {
-                            character = Character.sparky;
-                          });
-                        },
-                        characterWidth: characterWidth,
-                      ),
-                    ],
-                  ),
-                  if (!screenHeightIsSmall) const WhiteSpace(height: 50),
-                  Row(
+        child: Stack(
+          children: [
+            Positioned(
+                top: 0,
+                right: 0,
+                left: 0,
+                child: const BannerAdPanel()),
+            Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Center(
+                child: SingleChildScrollView(
+                  child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Text('Difficulty:',
-                          style: Theme.of(context).textTheme.bodyLarge!),
-                      LevelPicker(
-                        level: game.levelManager.selectedLevel.toDouble(),
-                        label: game.levelManager.selectedLevel.toString(),
-                        onChanged: ((value) {
-                          setState(() {
-                            game.levelManager.selectLevel(value.toInt());
-                          });
-                        }),
+                      Image.asset(
+                        'assets/images/game/hoplet_bird.png',
+                        height: characterWidth * 1.90,
+                        fit: BoxFit.contain,
+                      ),
+                      const WhiteSpace(height: 24),
+                      Text(
+                        'Hoplet Bird',
+                        style: titleStyle.copyWith(
+                          height: .8,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const WhiteSpace(),
+                      Align(
+                        alignment: Alignment.center,
+                        child: Text('Select your character:',
+                            style: Theme.of(context).textTheme.headlineSmall!
+                        ),
+                      ),
+                      if (!screenHeightIsSmall) const WhiteSpace(height: 30),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          CharacterButton(
+                            character: Character.hoppy,
+                            selected: character == Character.hoppy,
+                            onSelectChar: () {
+                              setState(() {
+                                character = Character.hoppy;
+                              });
+                            },
+                            characterWidth: characterWidth,
+                          ),
+                          CharacterButton(
+                            character: Character.peppy,
+                            selected: character == Character.peppy,
+                            onSelectChar: () {
+                              setState(() {
+                                character = Character.peppy;
+                              });
+                            },
+                            characterWidth: characterWidth,
+                          ),
+                        ],
+                      ),
+                      if (!screenHeightIsSmall) const WhiteSpace(height: 50),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text('Difficulty:',
+                              style: Theme.of(context).textTheme.bodyLarge!),
+                          LevelPicker(
+                            level: game.levelManager.selectedLevel.toDouble(),
+                            label: game.levelManager.selectedLevel.toString(),
+                            onChanged: ((value) {
+                              setState(() {
+                                game.levelManager.selectLevel(value.toInt());
+                              });
+                            }),
+                          ),
+                        ],
+                      ),
+                      if (!screenHeightIsSmall) const WhiteSpace(height: 50),
+                      Center(
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            game.gameManager.selectCharacter(character);
+                            game.startGame();
+                          },
+                          style: ButtonStyle(
+                            minimumSize: WidgetStateProperty.all(
+                              const Size(100, 50),
+                            ),
+                            textStyle: WidgetStateProperty.all(
+                                Theme.of(context).textTheme.titleLarge),
+                          ),
+                          child: const Text('Start'),
+                        ),
                       ),
                     ],
                   ),
-                  if (!screenHeightIsSmall) const WhiteSpace(height: 50),
-                  Center(
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        game.gameManager.selectCharacter(character);
-                        game.startGame();
-                      },
-                      style: ButtonStyle(
-                        minimumSize: WidgetStateProperty.all(
-                          const Size(100, 50),
-                        ),
-                        textStyle: WidgetStateProperty.all(
-                            Theme.of(context).textTheme.titleLarge),
-                      ),
-                      child: const Text('Start'),
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
-          ),
+          ],
         ),
       );
     });
@@ -188,7 +204,7 @@ class CharacterButton extends StatelessWidget {
             ),
             const WhiteSpace(height: 18),
             Text(
-              character.name,
+              character.displayName,
               style: const TextStyle(fontSize: 20),
             ),
           ],

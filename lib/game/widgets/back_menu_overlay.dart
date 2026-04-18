@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../ads/banner_ad_panel.dart';
-import '../doodle_dash.dart';
+import '../hoplet_bird.dart';
 import '../managers/game_manager.dart';
 import 'widgets.dart';
 
@@ -18,14 +18,13 @@ class BackMenuOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final doodleDash = game as DoodleDash;
-    final character = doodleDash.gameManager.character;
+    final hopletBird = game as HopletBird;
+    final character = hopletBird.gameManager.character;
 
     return Material(
       color: Theme.of(context).colorScheme.surface,
       child: Stack(
         children: [
-          const BannerAdPanel(),
           Center(
             child: Padding(
               padding: const EdgeInsets.all(48.0),
@@ -50,31 +49,29 @@ class BackMenuOverlay extends StatelessWidget {
                   const WhiteSpace(height: 50),
                   ElevatedButton(
                     onPressed: () {
-                      doodleDash.overlays.remove('backMenuOverlay');
-                      doodleDash.togglePauseState();
+                              hopletBird.overlays.remove('backMenuOverlay');
+                              hopletBird.togglePauseState();
                     },
                     style: ButtonStyle(
-                      minimumSize: WidgetStateProperty.all(
-                        const Size(200, 75),
-                      ),
+                      minimumSize: WidgetStateProperty.all(const Size(200, 75)),
                       textStyle: WidgetStateProperty.all(
-                          Theme.of(context).textTheme.titleLarge),
+                        Theme.of(context).textTheme.titleLarge,
+                      ),
                     ),
                     child: const Text('Resume'),
                   ),
                   const WhiteSpace(height: 20),
                   ElevatedButton(
                     onPressed: () {
-                      doodleDash.togglePauseState();
-                      doodleDash.overlays.remove('backMenuOverlay');
-                      doodleDash.resetGame();
+                          hopletBird.togglePauseState();
+                          hopletBird.overlays.remove('backMenuOverlay');
+                          hopletBird.resetGame();
                     },
                     style: ButtonStyle(
-                      minimumSize: WidgetStateProperty.all(
-                        const Size(200, 75),
-                      ),
+                      minimumSize: WidgetStateProperty.all(const Size(200, 75)),
                       textStyle: WidgetStateProperty.all(
-                          Theme.of(context).textTheme.titleLarge),
+                        Theme.of(context).textTheme.titleLarge,
+                      ),
                     ),
                     child: const Text('Restart'),
                   ),
@@ -84,12 +81,13 @@ class BackMenuOverlay extends StatelessWidget {
                       SystemNavigator.pop();
                     },
                     style: ButtonStyle(
-                      backgroundColor: WidgetStateProperty.all(Colors.redAccent),
-                      minimumSize: WidgetStateProperty.all(
-                        const Size(200, 75),
+                      backgroundColor: WidgetStateProperty.all(
+                        Colors.redAccent,
                       ),
+                      minimumSize: WidgetStateProperty.all(const Size(200, 75)),
                       textStyle: WidgetStateProperty.all(
-                          Theme.of(context).textTheme.titleLarge),
+                        Theme.of(context).textTheme.titleLarge,
+                      ),
                     ),
                     child: const Text('Exit Game'),
                   ),
@@ -97,6 +95,11 @@ class BackMenuOverlay extends StatelessWidget {
               ),
             ),
           ),
+          Positioned(
+              top: 0,
+              right: 0,
+              left: 0,
+              child: const BannerAdPanel()),
         ],
       ),
     );

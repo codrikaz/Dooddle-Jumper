@@ -7,7 +7,7 @@ import 'package:flame/game.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 
-import '../doodle_dash.dart';
+import '../hoplet_bird.dart';
 import 'widgets.dart';
 
 class GameOverlay extends StatefulWidget {
@@ -48,7 +48,7 @@ class GameOverlayState extends State<GameOverlay> {
                       size: 48,
                     ),
               onPressed: () {
-                (widget.game as DoodleDash).togglePauseState();
+                (widget.game as HopletBird).togglePauseState();
                 setState(
                   () {
                     isPaused = !isPaused;
@@ -69,10 +69,10 @@ class GameOverlayState extends State<GameOverlay> {
                       padding: const EdgeInsets.only(left: 24),
                       child: GestureDetector(
                         onTapDown: (details) {
-                          (widget.game as DoodleDash).player.moveLeft();
+                          (widget.game as HopletBird).player.moveLeft();
                         },
                         onTapUp: (details) {
-                          (widget.game as DoodleDash).player.resetDirection();
+                          (widget.game as HopletBird).player.resetDirection();
                         },
                         child: Material(
                           color: Colors.transparent,
@@ -86,10 +86,10 @@ class GameOverlayState extends State<GameOverlay> {
                       padding: const EdgeInsets.only(right: 24),
                       child: GestureDetector(
                         onTapDown: (details) {
-                          (widget.game as DoodleDash).player.moveRight();
+                          (widget.game as HopletBird).player.moveRight();
                         },
                         onTapUp: (details) {
-                          (widget.game as DoodleDash).player.resetDirection();
+                          (widget.game as HopletBird).player.resetDirection();
                         },
                         child: Material(
                           color: Colors.transparent,

@@ -7,13 +7,13 @@ import 'dart:math';
 import 'package:flame/components.dart';
 
 import './managers.dart';
-import '../doodle_dash.dart';
+import '../hoplet_bird.dart';
 import '../sprites/sprites.dart';
 import '../util/util.dart';
 
 final Random _rand = Random();
 
-class ObjectManager extends Component with HasGameReference<DoodleDash> {
+class ObjectManager extends Component with HasGameReference<HopletBird> {
   ObjectManager({
     this.minVerticalDistanceToNextPlatform = 200,
     this.maxVerticalDistanceToNextPlatform = 300,

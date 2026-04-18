@@ -11,11 +11,18 @@ import './world.dart';
 import 'managers/managers.dart';
 import 'sprites/sprites.dart';
 
-enum Character { dash, sparky }
+enum Character { hoppy, peppy }
 
-class DoodleDash extends FlameGame
+extension CharacterDisplayName on Character {
+  String get displayName => switch (this) {
+        Character.hoppy => 'Hoppy',
+        Character.peppy => 'Peppy',
+      };
+}
+
+class HopletBird extends FlameGame
     with HasKeyboardHandlerComponents, HasCollisionDetection {
-  DoodleDash({super.children});
+  HopletBird({super.children});
 
   final World _world = World();
   LevelManager levelManager = LevelManager();
@@ -155,6 +162,7 @@ class DoodleDash extends FlameGame
   }
 
   void onLose() {
+    gameManager.registerGameOver();
     gameManager.state = GameState.gameOver;
     camera.stop();
     player.removeFromParent();

@@ -5,10 +5,9 @@
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import 'ads/ad_service.dart';
-import 'game/doodle_dash.dart';
+import 'game/hoplet_bird.dart';
 import 'game/util/util.dart';
 import 'game/widgets/widgets.dart';
 
@@ -24,24 +23,25 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Doodle Jumper',
+      title: 'Hoplet Bird',
       themeMode: ThemeMode.dark,
 
       theme: ThemeData(
         colorScheme: lightColorScheme,
+        fontFamily: 'gomarice_no_continue',
         useMaterial3: true,
       ),
       darkTheme: ThemeData(
         colorScheme: darkColorScheme,
-        textTheme: GoogleFonts.audiowideTextTheme(ThemeData.dark().textTheme),
+        fontFamily: 'gomarice_no_continue',
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Doodle Jumper'),
+      home: const MyHomePage(title: 'Hoplet Bird'),
     );
   }
 }
 
-final DoodleDash game = DoodleDash();
+final HopletBird game = HopletBird();
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});

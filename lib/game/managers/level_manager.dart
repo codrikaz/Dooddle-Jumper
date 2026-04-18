@@ -4,16 +4,16 @@
 
 import 'package:flame/components.dart';
 
-import '../doodle_dash.dart';
+import '../hoplet_bird.dart';
 
 // It won't be a detailed section of the codelab, as its not Flame specific
-class LevelManager extends Component with HasGameReference<DoodleDash> {
+class LevelManager extends Component with HasGameReference<HopletBird> {
   LevelManager({this.selectedLevel = 1, this.level = 1});
 
   int selectedLevel; // level that the player selects at the beginning
   int level; // current level
   // Configurations for different levels of difficulty,
-  //the higher level the further away Dash may need to jump. Since
+  //the higher level the further away Hoppy may need to jump. Since
   // gravity is constant, jumpSpeed needs to accomodate for further distance.
   // Score indicates the score needed to be acheived to "level up"
   final Map<int, Difficulty> levelsConfig = {

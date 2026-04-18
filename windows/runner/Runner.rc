@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "dash" "\0"
+            VALUE "FileDescription", "Hoplet Bird" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "dash" "\0"
+            VALUE "InternalName", "hoplet_bird" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2023 com.example. All rights reserved." "\0"
-            VALUE "OriginalFilename", "dash.exe" "\0"
-            VALUE "ProductName", "dash" "\0"
+            VALUE "OriginalFilename", "hoplet_bird.exe" "\0"
+            VALUE "ProductName", "Hoplet Bird" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

@@ -5,15 +5,21 @@
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 
-import '../doodle_dash.dart';
+import '../hoplet_bird.dart';
 
 // It won't be a detailed section of the codelab, as its not Flame specific
-class GameManager extends Component with HasGameReference<DoodleDash> {
+class GameManager extends Component with HasGameReference<HopletBird> {
   GameManager();
 
-  Character character = Character.dash;
+  static const List<int> _interstitialThresholds = [3, 2, 1];
+  static const Duration _interstitialResetWindow = Duration(hours: 3);
+
+  Character character = Character.hoppy;
   ValueNotifier<int> score = ValueNotifier(0);
   GameState state = GameState.intro;
+  int _gameOversSinceInterstitial = 0;
+  int _interstitialStage = 0;
+  DateTime? _lastGameOverAt;
 
   bool get isPlaying => state == GameState.playing;
   bool get isGameOver => state == GameState.gameOver;
@@ -26,6 +32,35 @@ class GameManager extends Component with HasGameReference<DoodleDash> {
 
   void increaseScore() {
     score.value++;
+  }
+
+  void registerGameOver() {
+    final now = DateTime.now();
+    if (_lastGameOverAt != null &&
+        now.difference(_lastGameOverAt!) >= _interstitialResetWindow) {
+      _resetInterstitialCadence();
+    }
+
+    _lastGameOverAt = now;
+    _gameOversSinceInterstitial++;
+  }
+
+  bool consumeInterstitialReplayEligibility() {
+    final currentThreshold = _interstitialThresholds[_interstitialStage];
+    if (_gameOversSinceInterstitial < currentThreshold) {
+      return false;
+    }
+
+    _gameOversSinceInterstitial = 0;
+    if (_interstitialStage < _interstitialThresholds.length - 1) {
+      _interstitialStage++;
+    }
+    return true;
+  }
+
+  void _resetInterstitialCadence() {
+    _gameOversSinceInterstitial = 0;
+    _interstitialStage = 0;
   }
 
   void selectCharacter(Character selectedCharacter) {

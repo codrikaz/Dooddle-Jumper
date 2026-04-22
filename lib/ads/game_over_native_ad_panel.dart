@@ -2,6 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
+import 'ad_units.dart';
+
 class GameOverNativeAdPanel extends StatefulWidget {
   const GameOverNativeAdPanel({super.key});
 
@@ -14,18 +16,8 @@ class _GameOverNativeAdPanelState extends State<GameOverNativeAdPanel> {
   bool _isLoaded = false;
 
   String? get _adUnitId {
-    if (kIsWeb) {
-      return null;
-    }
-
-    switch (defaultTargetPlatform) {
-      case TargetPlatform.android:
-        return 'ca-app-pub-3940256099942544/2247696110';
-      case TargetPlatform.iOS:
-        return 'ca-app-pub-3940256099942544/3986624511';
-      default:
-        return null;
-    }
+    if (kIsWeb) return null;
+    return AdUnits.native;
   }
 
   @override

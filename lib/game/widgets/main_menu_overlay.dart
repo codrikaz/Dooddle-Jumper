@@ -46,7 +46,7 @@ class _MainMenuOverlayState extends State<MainMenuOverlay> {
                 left: 0,
                 child: const BannerAdPanel()),
             Padding(
-              padding: const EdgeInsets.all(24.0),
+              padding: const EdgeInsets.only(left: 24, right: 24, bottom: 24, top: 70),
               child: Center(
                 child: SingleChildScrollView(
                   child: Column(
@@ -58,7 +58,7 @@ class _MainMenuOverlayState extends State<MainMenuOverlay> {
                         height: characterWidth * 1.90,
                         fit: BoxFit.contain,
                       ),
-                      const WhiteSpace(height: 24),
+                      const WhiteSpace(height: 0),
                       Text(
                         'Hoplet Bird',
                         style: titleStyle.copyWith(
@@ -66,7 +66,7 @@ class _MainMenuOverlayState extends State<MainMenuOverlay> {
                         ),
                         textAlign: TextAlign.center,
                       ),
-                      const WhiteSpace(),
+                      const WhiteSpace(height: 70,),
                       Align(
                         alignment: Alignment.center,
                         child: Text('Select your character:',
@@ -202,7 +202,7 @@ class CharacterButton extends StatelessWidget {
               height: characterWidth,
               width: characterWidth,
             ),
-            const WhiteSpace(height: 18),
+            const WhiteSpace(height: 12),
             Text(
               character.displayName,
               style: const TextStyle(fontSize: 20),

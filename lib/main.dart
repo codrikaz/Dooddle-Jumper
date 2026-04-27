@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'ads/ad_service.dart';
+import 'audio/game_audio_controller.dart';
 import 'game/hoplet_bird.dart';
 import 'game/util/util.dart';
 import 'game/widgets/widgets.dart';
@@ -15,6 +16,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await AdService.initialize();
   runApp(const MyApp());
+  await GameAudioController.initialize();
 }
 
 class MyApp extends StatelessWidget {

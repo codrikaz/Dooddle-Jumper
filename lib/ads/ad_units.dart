@@ -1,9 +1,9 @@
 import 'package:flutter/foundation.dart';
 
 class AdUnits {
-  static const bool _adsEnabledInRelease = false;
+  static const bool _adsEnabledInRelease = true;
 
-  // Replace these with your real Android ad unit IDs before release.
+  // Real Android ad unit IDs used in release builds.
   static const String _androidBannerRelease = 'ca-app-pub-5123860085265147/2317864156';
   static const String _androidInterstitialRelease = 'ca-app-pub-5123860085265147/2456323315';
   static const String _androidNativeRelease = 'ca-app-pub-5123860085265147/8830159974';

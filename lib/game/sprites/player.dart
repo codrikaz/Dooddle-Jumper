@@ -8,6 +8,7 @@ import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/services.dart';
 
+import '../../audio/game_audio_controller.dart';
 import '../hoplet_bird.dart';
 import 'sprites.dart';
 
@@ -133,6 +134,7 @@ class Player extends SpriteGroupComponent<PlayerState>
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
     super.onCollision(intersectionPoints, other);
     if (other is EnemyPlatform && !isInvincible) {
+      GameAudioController.playCrash();
       game.onLose();
       return;
     }
@@ -141,12 +143,16 @@ class Player extends SpriteGroupComponent<PlayerState>
         (intersectionPoints.first.y - intersectionPoints.last.y).abs() < 5;
 
     if (isMovingDown && isCollidingVertically) {
+      final wasRocket = current == PlayerState.rocket;
       current = isWearingHat ? PlayerState.nooglerCenter : PlayerState.center;
+      // Rocket boost ends when player lands back on a platform
+      if (wasRocket) GameAudioController.stopBoostLoop();
       if (other is NormalPlatform) {
         jump();
+        GameAudioController.playCollect(); // soft collect sound on every bounce
         return;
       } else if (other is SpringBoard) {
-        jump(specialJumpSpeed: jumpSpeed * 2);
+        jump(specialJumpSpeed: jumpSpeed * 2, playSound: true); // springboard gets a sound
         return;
       } else if (other is BrokenPlatform &&
           other.current == BrokenPlatformState.cracked) {
@@ -158,6 +164,8 @@ class Player extends SpriteGroupComponent<PlayerState>
     if (!hasPowerup && other is Rocket) {
       current = PlayerState.rocket;
       other.removeFromParent();
+      GameAudioController.playPowerup();
+      GameAudioController.startBoostLoop(isRocket: true); // rocket.mp3 loop
       jump(specialJumpSpeed: jumpSpeed * other.jumpSpeedMultiplier);
       return;
     } else if (!hasPowerup && other is NooglerHat) {
@@ -166,12 +174,15 @@ class Player extends SpriteGroupComponent<PlayerState>
       if (current == PlayerState.right) current = PlayerState.nooglerRight;
       other.removeFromParent();
       _removePowerupAfterTime(other.activeLengthInMS);
+      GameAudioController.playBoost();
+      GameAudioController.startBoostLoop(isRocket: false); // powerup_starting.mp3 loop
       jump(specialJumpSpeed: jumpSpeed * other.jumpSpeedMultiplier);
       return;
     }
   }
 
-  void jump({double? specialJumpSpeed}) {
+  void jump({double? specialJumpSpeed, bool playSound = false}) {
+    if (playSound) GameAudioController.playJump();
     _velocity.y = specialJumpSpeed != null ? -specialJumpSpeed : -jumpSpeed;
   }
 
@@ -182,6 +193,7 @@ class Player extends SpriteGroupComponent<PlayerState>
         return;
       }
       current = PlayerState.center;
+      GameAudioController.stopBoostLoop(); // hat expired — stop boost loop
     });
   }
 
@@ -193,6 +205,7 @@ class Player extends SpriteGroupComponent<PlayerState>
     _powerUpToken++;
     resetDirection();
     _velocity = Vector2.zero();
+    GameAudioController.stopBoostLoop(); // always stop boost on reset
     if (sprites != null) {
       current = PlayerState.center;
     }

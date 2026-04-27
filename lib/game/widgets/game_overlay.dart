@@ -7,6 +7,7 @@ import 'package:flame/game.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 
+import '../../audio/game_audio_controller.dart';
 import '../hoplet_bird.dart';
 import 'widgets.dart';
 
@@ -47,7 +48,8 @@ class GameOverlayState extends State<GameOverlay> {
                       Icons.pause,
                       size: 48,
                     ),
-              onPressed: () {
+              onPressed: () async {
+                await GameAudioController.playButtonTap();
                 (widget.game as HopletBird).togglePauseState();
                 setState(
                   () {
@@ -69,6 +71,7 @@ class GameOverlayState extends State<GameOverlay> {
                       padding: const EdgeInsets.only(left: 24),
                       child: GestureDetector(
                         onTapDown: (details) {
+                          GameAudioController.playHaptic();
                           (widget.game as HopletBird).player.moveLeft();
                         },
                         onTapUp: (details) {
@@ -86,6 +89,7 @@ class GameOverlayState extends State<GameOverlay> {
                       padding: const EdgeInsets.only(right: 24),
                       child: GestureDetector(
                         onTapDown: (details) {
+                          GameAudioController.playHaptic();
                           (widget.game as HopletBird).player.moveRight();
                         },
                         onTapUp: (details) {

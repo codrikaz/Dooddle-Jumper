@@ -11,8 +11,8 @@ import '../hoplet_bird.dart';
 class GameManager extends Component with HasGameReference<HopletBird> {
   GameManager();
 
-  static const List<int> _interstitialThresholds = [3, 2, 1];
-  static const Duration _interstitialResetWindow = Duration(hours: 3);
+  static const List<int> _interstitialThresholds = [4, 3, 2];
+  static const Duration _interstitialResetWindow = Duration(hours: 1, minutes: 30);
 
   Character character = Character.hoppy;
   ValueNotifier<int> score = ValueNotifier(0);

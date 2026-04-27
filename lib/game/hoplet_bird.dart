@@ -7,6 +7,7 @@ import 'package:flame/input.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../audio/game_audio_controller.dart';
 import './world.dart';
 import 'managers/managers.dart';
 import 'sprites/sprites.dart';
@@ -162,10 +163,12 @@ class HopletBird extends FlameGame
   }
 
   void onLose() {
+    GameAudioController.playGameOver(); // ← FIRST: instant via pre-warmed pool
     gameManager.registerGameOver();
     gameManager.state = GameState.gameOver;
     camera.stop();
     player.removeFromParent();
+    GameAudioController.stopBoostLoop();
     overlays.add('gameOverOverlay');
   }
 

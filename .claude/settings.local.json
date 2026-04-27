@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:kenney.nl)",
+      "WebSearch",
+      "WebFetch(domain:gamesounds.xyz)",
+      "WebFetch(domain:mixkit.co)",
+      "WebFetch(domain:pixabay.com)",
+      "Bash(cp \"C:/Users/codrikaz/Downloads/music.mp3\" \"C:/Users/codrikaz/StudioProjects/Dooddle-Jumper/assets/audio/music/music.mp3\")",
+      "Bash(cp \"C:/Users/codrikaz/Downloads/click.mp3\" \"C:/Users/codrikaz/StudioProjects/Dooddle-Jumper/assets/audio/sfx/click.mp3\")",
+      "Bash(cp \"C:/Users/codrikaz/Downloads/collect.mp3\" \"C:/Users/codrikaz/StudioProjects/Dooddle-Jumper/assets/audio/sfx/collect.mp3\")",
+      "Bash(cp \"C:/Users/codrikaz/Downloads/rocket.mp3\" \"C:/Users/codrikaz/StudioProjects/Dooddle-Jumper/assets/audio/sfx/rocket.mp3\")",
+      "Bash(cp \"C:/Users/codrikaz/Downloads/crash.mp3\" \"C:/Users/codrikaz/StudioProjects/Dooddle-Jumper/assets/audio/sfx/crash.mp3\")",
+      "Bash(flutter pub *)",
+      "Bash(flutter analyze *)"
+    ]
+  }
+}
